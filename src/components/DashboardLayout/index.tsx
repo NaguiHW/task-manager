@@ -1,11 +1,13 @@
 import { useAppContext } from '../../providers/AppProvider';
-import { ReactNode, useState } from 'react';
-import { Link } from 'react-router-dom';
+import {ReactNode, useEffect, useState} from 'react';
+import {Link, useNavigate} from 'react-router-dom';
 import { RiMenuFold2Fill, RiMenuUnfold2Fill } from 'react-icons/ri';
+import {isTokenValid} from "../../helpers/utils.ts";
 
 const DashboardLayout = ({ children }: { children: ReactNode }) => {
-  const { setToken, setName } = useAppContext();
+  const { token, setToken, setName } = useAppContext();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     setToken!('');
@@ -15,6 +17,14 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+
+  useEffect(() => {
+    if (!token || !isTokenValid(token)) {
+      setToken!('');
+      setName!('');
+      navigate('/login');
+    }
+  }, [navigate, setName, setToken, token]);
 
   return (
     <div className="h-screen flex flex-col">
