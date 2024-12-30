@@ -5,6 +5,7 @@ import SignUp from '../pages/SignUp';
 import Dashboard from '../pages/Dashboard';
 import Login from '../pages/Login';
 import Tasks from "../pages/Tasks";
+import CreateTask from "../pages/Tasks/Create";
 
 const routes: RouteObject[] = [
   {
@@ -29,6 +30,10 @@ const routes: RouteObject[] = [
       {
         path: '/tasks',
         element: <Tasks />,
+      },
+      {
+        path: '/create-task',
+        element: <CreateTask />,
       }
     ],
   }

@@ -68,7 +68,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
                     <Link to="/tasks"><p className="text-left w-full px-4 py-2 rounded hover:bg-gray-700">Tasks</p></Link>
                   </li>
                   <li>
-                    <Link to="/new-task"><p className="text-left w-full px-4 py-2 rounded hover:bg-gray-700">Create Task</p></Link>
+                    <Link to="/create-task"><p className="text-left w-full px-4 py-2 rounded hover:bg-gray-700">Create Task</p></Link>
                   </li>
                 </ul>
               </nav>

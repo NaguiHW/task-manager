@@ -1,5 +1,6 @@
 import { jwtDecode } from 'jwt-decode';
-import { JwtPayload } from '../types/helpers/utilsType';
+import {ErrorObject, JwtPayload} from '../types/helpers/utilsType';
+import {format} from "date-fns";
 
 export const getItemFromStore = (key: string, defaultValue: string, store = localStorage) => {
   try {
@@ -31,3 +32,11 @@ export const isTokenValid = (token: string | undefined): boolean => {
     return false;
   }
 };
+
+export const formatDateTime = (date: string): string => {
+  return format(new Date(date), 'dd/MM/yyyy hh:mm:ss a');
+};
+
+export const formatErrorMessage = (error: ErrorObject[]): string => {
+  return error.map((err) => `${err.path}: ${err.msg}`).join(', ');
+}
