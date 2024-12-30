@@ -8,14 +8,17 @@ import { FaEdit } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
 import {formatDateTime} from "../../helpers/utils.ts";
 import {toast} from "react-toastify";
+import Pagination from "../../components/Pagination";
+import Dropdown from "../../components/Dropdown";
 
 const Tasks = () => {
   const { token } = useAppContext();
   const [data, setData] = useState<DataTaskType | undefined>();
 
-  const fetchTasks = useCallback(async () => {
+  const fetchTasks = useCallback(async (page = 1, completed: string = 'All') => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/tasks`, {
+      const url = `${import.meta.env.VITE_API_URL}/tasks?page=${page}&completed=${completed}`;
+      const response = await axios.get(url, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -59,41 +62,60 @@ const Tasks = () => {
     }
   };
 
+  const handleDropdownSelect = async (value: string) => {
+    await fetchTasks(1, value.toLowerCase());
+  }
+
   useEffect(() => {
     fetchTasks();
   }, [fetchTasks]);
 
   return (
     <DashboardLayout>
-      <div className="p-6 bg-gray-100">
+      <div className="p-2 bg-gray-100">
         <h1 className="text-2xl font-bold mb-4">Tasks List</h1>
-        {
-          data && data.totalTasks > 0 ? (
-            data.tasks.map((task) => (
-              <div key={task.id} className={`w-full border border-${task.completed ? 'green' : 'red'}-500 rounded-xl p-2 mb-2`}>
-                <h2 className="text-lg font-semibold">{task.title}</h2>
-                <p>{task.description}</p>
-                <p>{formatDateTime(task.createdAt)}</p>
-                <div className="flex">
-                  <p className="mr-2">Completed?</p>
-                  <Switch
-                    checked={task.completed}
-                    onChange={() => handleSwitchChange(task.id, task.completed)}
-                  />
+        { data && (
+          <div className="flex w-full justify-between items-center">
+            <h3 className="text-lg font-semibold">Total Tasks: {data.totalTasks}</h3>
+            <Dropdown onSelect={handleDropdownSelect} />
+          </div>
+        )}
+        <div className="mt-3">
+          {
+            data && data.totalTasks > 0 ? (
+              data.tasks.map((task) => (
+                <div key={task.id} className={`w-full border border-${task.completed ? 'green' : 'red'}-500 rounded-xl p-2 mb-2`}>
+                  <h2 className="text-lg font-semibold">{task.title}</h2>
+                  <p>{task.description}</p>
+                  <p>{formatDateTime(task.createdAt)}</p>
+                  <div className="flex">
+                    <p className="mr-2">Completed?</p>
+                    <Switch
+                      checked={task.completed}
+                      onChange={() => handleSwitchChange(task.id, task.completed)}
+                    />
+                  </div>
+                  <div className="flex">
+                    <FaEdit className="mr-2 cursor-pointer text-green-500 size-6" />
+                    <MdDeleteForever
+                      className="cursor-pointer text-red-500 size-6"
+                      onClick={() => handleDeleteTask(task.id)}
+                    />
+                  </div>
                 </div>
-                <div className="flex">
-                  <FaEdit className="mr-2 cursor-pointer text-green-500 size-6" />
-                  <MdDeleteForever
-                    className="cursor-pointer text-red-500 size-6"
-                    onClick={() => handleDeleteTask(task.id)}
-                  />
-                </div>
-              </div>
-            ))
-          ) : (
-            <p>No tasks found.</p>
-          )
-        }
+              ))
+            ) : (
+              <p>No tasks found.</p>
+            )
+          }
+        </div>
+        { data && data.totalPages > 1 && (
+          <Pagination
+            totalPages={data.totalPages}
+            currentPage={data.page}
+            onPageChange={fetchTasks}
+          />
+        )}
       </div>
     </DashboardLayout>
 );

@@ -10,6 +10,6 @@ export interface DataTaskType {
   limit: number;
   page: number;
   tasks: TaskType[];
-  totalPage: number;
+  totalPages: number;
   totalTasks: number;
 }
