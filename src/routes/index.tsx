@@ -6,6 +6,7 @@ import Dashboard from '../pages/Dashboard';
 import Login from '../pages/Login';
 import Tasks from "../pages/Tasks";
 import CreateTask from "../pages/Tasks/Create";
+import EditTask from "../pages/Tasks/Edit";
 
 const routes: RouteObject[] = [
   {
@@ -30,6 +31,10 @@ const routes: RouteObject[] = [
       {
         path: '/tasks',
         element: <Tasks />,
+      },
+      {
+        path: '/tasks/:id/edit',
+        element: <EditTask />,
       },
       {
         path: '/create-task',

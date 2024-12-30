@@ -1,13 +1,14 @@
-import {useAppContext} from "../../providers/AppProvider";
 import DashboardLayout from "../../components/DashboardLayout";
-import {FormEvent, useState} from "react";
+import {useAppContext} from "../../providers/AppProvider";
+import {useNavigate, useParams} from "react-router-dom";
+import {FormEvent, useEffect, useState} from "react";
 import axios from "axios";
-import {useNavigate} from "react-router-dom";
 import {toast} from "react-toastify";
-import {formatErrorMessage} from "../../helpers/utils.ts";
+import {formatErrorMessage} from "../../helpers/utils";
 
-const CreateTask = () => {
+const EditTask = () => {
   const { token } = useAppContext();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [taskData, setTaskData] = useState({
     title: '',
@@ -18,14 +19,14 @@ const CreateTask = () => {
     e.preventDefault();
 
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/tasks`, taskData, {
+      await axios.put(`${import.meta.env.VITE_API_URL}/tasks/${id}`, taskData, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
 
       navigate('/tasks');
-      toast.success('Task created successfully');
+      toast.success('Task updated successfully');
     } catch (error) {
       console.error(error);
       if (error instanceof Error) {
@@ -38,11 +39,29 @@ const CreateTask = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchTask = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/tasks/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        setTaskData(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    fetchTask();
+  }, [id, token]);
+
   return (
     <DashboardLayout>
       <div className="flex items-center justify-center bg-gray-100 h-full">
         <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Create Task</h2>
+          <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Update Task</h2>
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title</label>
@@ -70,7 +89,7 @@ const CreateTask = () => {
                 type="submit"
                 className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
-                Create Task
+                Update Task
               </button>
             </div>
           </form>
@@ -78,6 +97,6 @@ const CreateTask = () => {
       </div>
     </DashboardLayout>
   );
-};
+}
 
-export default CreateTask;
+export default EditTask;

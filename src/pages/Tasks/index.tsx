@@ -10,6 +10,7 @@ import {formatDateTime} from "../../helpers/utils.ts";
 import {toast} from "react-toastify";
 import Pagination from "../../components/Pagination";
 import Dropdown from "../../components/Dropdown";
+import {Link} from "react-router-dom";
 
 const Tasks = () => {
   const { token } = useAppContext();
@@ -96,7 +97,9 @@ const Tasks = () => {
                     />
                   </div>
                   <div className="flex">
-                    <FaEdit className="mr-2 cursor-pointer text-green-500 size-6" />
+                    <Link to={`/tasks/${task.id}/edit`}>
+                      <FaEdit className="mr-2 cursor-pointer text-green-500 size-6" />
+                    </Link>
                     <MdDeleteForever
                       className="cursor-pointer text-red-500 size-6"
                       onClick={() => handleDeleteTask(task.id)}
