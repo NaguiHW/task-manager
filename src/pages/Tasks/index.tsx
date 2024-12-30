@@ -6,6 +6,8 @@ import { DataTaskType } from '../../types/taskType';
 import Switch from '../../components/Switch';
 import { FaEdit } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
+import {formatDateTime} from "../../helpers/utils.ts";
+import {toast} from "react-toastify";
 
 const Tasks = () => {
   const { token } = useAppContext();
@@ -35,9 +37,11 @@ const Tasks = () => {
         }
       });
 
+      toast.success('Task updated successfully');
       await fetchTasks();
     } catch (error) {
       console.error(error);
+      toast.error('Error updating task');
     }
   };
 
@@ -66,10 +70,10 @@ const Tasks = () => {
         {
           data && data.totalTasks > 0 ? (
             data.tasks.map((task) => (
-              <div key={task.id} className={`w-full border border-${task.completed ? 'green' : 'red'}-500 rounded-xl p-2`}>
+              <div key={task.id} className={`w-full border border-${task.completed ? 'green' : 'red'}-500 rounded-xl p-2 mb-2`}>
                 <h2 className="text-lg font-semibold">{task.title}</h2>
                 <p>{task.description}</p>
-                <p>{task.createdAt}</p>
+                <p>{formatDateTime(task.createdAt)}</p>
                 <div className="flex">
                   <p className="mr-2">Completed?</p>
                   <Switch
